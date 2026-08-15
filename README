@@ -1,0 +1,65 @@
+# OurCity — Smart Sanitation
+
+> AI-powered waste management and illegal dumping detection platform for a cleaner, smarter Nagpur.
+
+## 📌 Project
+
+OurCity is an intelligent waste-management platform designed for the Viksit Nagpur theme.
+
+The system transforms citizen waste reports into actionable intelligence by:
+
+- Detecting and classifying waste using AI
+- Identifying illegal dumping hotspots
+- Prioritizing waste-collection requests
+- Predicting recurring dumping locations
+- Optimizing municipal garbage collection routes
+- Providing an NMC monitoring dashboard
+
+## 🎯 Problem
+
+Inconsistent waste collection and illegal dumping can create recurring sanitation problems in open spaces and residential areas.
+
+Traditional complaint systems are mainly reactive:
+
+Citizen reports → Municipality responds
+
+OurCity aims to move toward:
+
+Citizen data → AI analysis → Hotspot intelligence → Prediction → Route optimization → Resolution
+
+## 🚀 MVP Features
+
+- [ ] Citizen waste reporting
+- [ ] Image upload
+- [ ] GPS location detection
+- [ ] AI waste classification
+- [ ] Waste severity detection
+- [ ] Automatic ticket generation
+- [ ] Ward assignment
+- [ ] Illegal dumping hotspot detection
+- [ ] Hotspot prediction
+- [ ] NMC dashboard
+- [ ] Waste heatmap
+- [ ] Garbage truck route optimization
+- [ ] Collection analytics
+
+## 🏗️ Architecture
+
+```text
+Citizen
+   ↓
+Photo + GPS
+   ↓
+AI Waste Classification
+   ↓
+Severity / Priority
+   ↓
+Hotspot Detection
+   ↓
+NMC Dashboard
+   ↓
+Route Optimization
+   ↓
+Collection
+   ↓
+Resolution
