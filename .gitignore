@@ -11,7 +11,7 @@
 __pycache__/
 *.py[cod]
 *.pyo
-
+*.pyc
 .venv/
 venv/
 env/
@@ -70,3 +70,8 @@ temp/
 # =========================
 .coverage
 htmlcov/
+
+backend/*.db
+backend/*.sqlite
+backend/*.sqlite3
+backend/venv/
