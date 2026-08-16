@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -12,40 +13,41 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
 import CityMap from "../components/map/CityMap";
 
-const stops = [
-  {
-    number: 1,
-    area: "Dharampeth",
-    time: "4:10 PM",
-    status: "completed",
-  },
-  {
-    number: 2,
-    area: "Civil Lines",
-    time: "4:25 PM",
-    status: "current",
-  },
-  {
-    number: 3,
-    area: "Sadar",
-    time: "4:40 PM",
-    status: "upcoming",
-  },
-  {
-    number: 4,
-    area: "Mahal",
-    time: "5:00 PM",
-    status: "upcoming",
-  },
-  {
-    number: 5,
-    area: "Manish Nagar",
-    time: "5:25 PM",
-    status: "upcoming",
-  },
-];
+import {
+  getOptimizedRoute,
+  type OptimizedRoute,
+} from "../services/routeService";
 
 function Routes() {
+  const [route, setRoute] = useState<OptimizedRoute | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function loadRoute() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const data = await getOptimizedRoute(
+          21.1458,
+          79.0882,
+        );
+
+        setRoute(data);
+      } catch (err) {
+        console.error("Route loading error:", err);
+        setError("Unable to load collection route.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadRoute();
+  }, []);
+
+  const firstStop = route?.stops[0];
+
   return (
     <div className="app">
       <Navbar />
@@ -53,10 +55,14 @@ function Routes() {
       <main className="routes-page">
         <div className="routes-container">
 
+          {/* Back */}
+
           <Link to="/dashboard" className="back-link">
             <ArrowLeft size={16} />
             Back to dashboard
           </Link>
+
+          {/* Header */}
 
           <div className="routes-header">
             <div>
@@ -78,6 +84,15 @@ function Routes() {
             </div>
           </div>
 
+          {/* Error */}
+
+          {error && (
+            <div className="route-error">
+              <strong>Route unavailable</strong>
+              <span>{error}</span>
+            </div>
+          )}
+
           {/* Route overview */}
 
           <section className="route-overview">
@@ -89,52 +104,89 @@ function Routes() {
 
               <div>
                 <span>ACTIVE VEHICLE</span>
+
                 <h2>Truck 104</h2>
+
                 <p>
-                  Route: <strong>Dharampeth → Sadar</strong>
+                  Route:{" "}
+                  <strong>
+                    Smart priority route
+                  </strong>
                 </p>
               </div>
             </div>
 
+            {/* Next stop */}
+
             <div className="route-stat">
               <Clock3 size={17} />
+
               <div>
                 <span>Next stop</span>
-                <strong>12 min</strong>
+
+                <strong>
+                  {loading
+                    ? "..."
+                    : firstStop
+                      ? `${firstStop.travel_time_minutes} min`
+                      : "—"}
+                </strong>
               </div>
             </div>
+
+            {/* Stops */}
 
             <div className="route-stat">
               <MapPin size={17} />
+
               <div>
                 <span>Stops remaining</span>
-                <strong>4</strong>
+
+                <strong>
+                  {loading
+                    ? "..."
+                    : route?.stops.length ?? 0}
+                </strong>
               </div>
             </div>
 
+            {/* Distance */}
+
             <div className="route-stat">
               <Navigation size={17} />
+
               <div>
-                <span>Distance remaining</span>
-                <strong>6.8 km</strong>
+                <span>Total distance</span>
+
+                <strong>
+                  {loading
+                    ? "..."
+                    : `${route?.total_distance_km ?? 0} km`}
+                </strong>
               </div>
             </div>
 
           </section>
 
-          {/* Map */}
+          {/* Route map */}
 
           <section className="route-map-panel">
+
             <div className="route-panel-header">
+
               <div>
                 <h2>Live route</h2>
-                <span>Truck 104 · Updated just now</span>
+
+                <span>
+                  Truck 104 · Backend optimized route
+                </span>
               </div>
 
               <div className="route-live">
                 <span />
                 LIVE
               </div>
+
             </div>
 
             <div className="route-map">
@@ -144,65 +196,122 @@ function Routes() {
                 showRoute={true}
               />
             </div>
+
           </section>
 
           {/* Route details */}
 
           <section className="route-details-grid">
 
-            {/* Stops */}
+            {/* Collection stops */}
 
             <div className="route-stops-panel">
 
               <div className="route-panel-header">
+
                 <div>
-                  <h2>Upcoming collection</h2>
-                  <span>Today's route schedule</span>
+                  <h2>Collection stops</h2>
+
+                  <span>
+                    Generated from current waste hotspots
+                  </span>
                 </div>
 
                 <RouteIcon size={18} />
+
               </div>
 
-              <div className="stops-list">
-                {stops.map((stop) => (
-                  <div
-                    key={stop.number}
-                    className={`route-stop ${stop.status}`}
-                  >
-                    <div className="stop-number">
-                      {stop.status === "completed" ? (
-                        <CheckCircle2 size={17} />
-                      ) : (
-                        stop.number
-                      )}
+              {loading ? (
+                <div className="route-loading">
+                  <div className="route-loading-spinner" />
+
+                  <span>
+                    Calculating optimal route...
+                  </span>
+                </div>
+              ) : route?.stops.length === 0 ? (
+                <div className="route-empty">
+                  <CheckCircle2 size={22} />
+
+                  <strong>
+                    No active collection stops
+                  </strong>
+
+                  <span>
+                    There are currently no detected hotspots
+                    requiring collection.
+                  </span>
+                </div>
+              ) : (
+                <div className="stops-list">
+
+                  {route?.stops.map((stop) => (
+                    <div
+                      key={stop.stop_number}
+                      className={`route-stop ${
+                        stop.stop_number === 1
+                          ? "current"
+                          : ""
+                      }`}
+                    >
+
+                      {/* Number */}
+
+                      <div className="stop-number">
+
+                        {stop.stop_number === 1 ? (
+                          <Navigation size={13} />
+                        ) : (
+                          stop.stop_number
+                        )}
+
+                      </div>
+
+                      {/* Information */}
+
+                      <div className="stop-info">
+
+                        <strong>
+                          Collection Stop{" "}
+                          {stop.stop_number}
+                        </strong>
+
+                        <span>
+                          <MapPin size={11} />
+
+                          {stop.report_count} reports
+                          {" · "}
+                          {stop.high_priority_reports} high
+                          priority
+                        </span>
+
+                      </div>
+
+                      {/* Time */}
+
+                      <div className="stop-time">
+
+                        <span>
+                          {stop.stop_number === 1
+                            ? "NEXT STOP"
+                            : "TRAVEL"}
+                        </span>
+
+                        <strong>
+                          {stop.travel_time_minutes} min
+                        </strong>
+
+                      </div>
+
                     </div>
+                  ))}
 
-                    <div className="stop-info">
-                      <strong>{stop.area}</strong>
+                </div>
+              )}
 
-                      <span>
-                        <MapPin size={11} />
-                        Collection zone
-                      </span>
-                    </div>
-
-                    <div className="stop-time">
-                      <span>
-                        {stop.status === "current"
-                          ? "ETA"
-                          : stop.status === "completed"
-                            ? "Collected"
-                            : "Expected"}
-                      </span>
-
-                      <strong>{stop.time}</strong>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
 
-            {/* Route intelligence */}
+            {/* AI Route intelligence */}
 
             <div className="route-ai-panel">
 
@@ -210,33 +319,65 @@ function Routes() {
                 <Navigation size={20} />
               </div>
 
-              <span>ROUTE INTELLIGENCE</span>
+              <span>
+                ROUTE INTELLIGENCE
+              </span>
 
               <h2>
-                Route optimized for current waste activity.
+                Priority-aware collection route.
               </h2>
 
               <p>
-                The collection route prioritizes areas with higher
-                waste-report density while minimizing unnecessary
-                travel between collection zones.
+                The backend analyzes current sanitation
+                hotspots and prioritizes areas with greater
+                waste-report density and higher-severity
+                reports.
               </p>
 
               <div className="route-ai-stats">
 
                 <div>
-                  <strong>18%</strong>
-                  <span>Distance saved</span>
+                  <strong>
+                    {loading
+                      ? "..."
+                      : `${route?.total_distance_km ?? 0} km`}
+                  </strong>
+
+                  <span>
+                    Total route distance
+                  </span>
                 </div>
 
                 <div>
-                  <strong>23 min</strong>
-                  <span>Estimated time saved</span>
+                  <strong>
+                    {loading
+                      ? "..."
+                      : `${route?.estimated_time_minutes ?? 0} min`}
+                  </strong>
+
+                  <span>
+                    Estimated travel time
+                  </span>
                 </div>
 
                 <div>
-                  <strong>12</strong>
-                  <span>Priority reports covered</span>
+                  <strong>
+                    {loading
+                      ? "..."
+                      : route?.stops.reduce(
+                          (
+                            total,
+                            stop,
+                          ) =>
+                            total +
+                            stop.high_priority_reports,
+                          0,
+                        ) ?? 0}
+                  </strong>
+
+                  <span>
+                    High priority reports
+                  </span>
                 </div>
 
               </div>
@@ -254,16 +395,20 @@ function Routes() {
             </div>
 
             <div>
-              <span>CITIZEN NOTIFICATION</span>
+
+              <span>
+                CITIZEN NOTIFICATION
+              </span>
 
               <h2>
                 Garbage collection is coming to your area.
               </h2>
 
               <p>
-                Residents near Civil Lines will receive an alert
-                approximately 15 minutes before Truck 104 arrives.
+                Residents near the next collection hotspot
+                can receive an alert before Truck 104 arrives.
               </p>
+
             </div>
 
             <button type="button">
