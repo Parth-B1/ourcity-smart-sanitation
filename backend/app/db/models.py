@@ -79,3 +79,39 @@ class Report(Base):
         default=datetime.utcnow,
         nullable=False,
     )
+class CollectionEvent(Base):
+    __tablename__ = "collection_events"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True,
+    )
+
+    truck_id = Column(
+        String(100),
+        nullable=False,
+        index=True,
+    )
+
+    latitude = Column(
+        Float,
+        nullable=False,
+    )
+
+    longitude = Column(
+        Float,
+        nullable=False,
+    )
+
+    reports_resolved = Column(
+        Integer,
+        nullable=False,
+        default=0,
+    )
+
+    completed_at = Column(
+        DateTime,
+        default=datetime.utcnow,
+        nullable=False,
+    )

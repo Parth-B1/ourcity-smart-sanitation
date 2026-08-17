@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.core.security import require_role
 from app.db.database import get_db
-from app.db.models import Report
+from app.db.models import CollectionEvent, Report
 
 
 router = APIRouter(
@@ -27,15 +27,13 @@ def collection_complete(
     ),
 ):
     """
-    Mark reports belonging to the selected
-    collection hotspot as resolved.
+    Complete collection at a hotspot.
 
-    Only authenticated truck operators
-    can call this endpoint.
+    1. Find active reports near the hotspot.
+    2. Mark those reports as resolved.
+    3. Create a permanent collection event.
     """
 
-    # Same hotspot radius currently used by
-    # hotspot_service.py.
     radius = 0.01
 
     reports = (
@@ -71,19 +69,39 @@ def collection_complete(
     if not nearby_reports:
         raise HTTPException(
             status_code=404,
-            detail="No active reports found at this collection location",
+            detail=(
+                "No active reports found "
+                "at this collection location"
+            ),
         )
 
+    # Mark reports as resolved
     for report in nearby_reports:
         report.status = "resolved"
 
+    # Create permanent collection event
+    event = CollectionEvent(
+        truck_id=str(
+            current_user.get("id", "unknown")
+        ),
+        latitude=data.latitude,
+        longitude=data.longitude,
+        reports_resolved=len(nearby_reports),
+    )
+
+    db.add(event)
     db.commit()
+    db.refresh(event)
 
     return {
         "success": True,
         "message": "Collection completed successfully",
-        "truck_id": current_user.get("id"),
-        "reports_resolved": len(nearby_reports),
-        "latitude": data.latitude,
-        "longitude": data.longitude,
+        "collection_event": {
+            "id": event.id,
+            "truck_id": event.truck_id,
+            "latitude": event.latitude,
+            "longitude": event.longitude,
+            "reports_resolved": event.reports_resolved,
+            "completed_at": event.completed_at,
+        },
     }
