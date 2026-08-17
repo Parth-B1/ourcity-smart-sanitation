@@ -2927,3 +2927,767 @@ a {
   height: 100%;
   width: 100%;
 }
+/* =========================================================
+   LOGIN PAGE
+   ========================================================= */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  background: #f5f8f6;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 430px;
+  padding: 36px;
+  background: #ffffff;
+  border: 1px solid #e3ebe6;
+  border-radius: 24px;
+  box-shadow: 0 18px 45px rgba(20, 50, 35, 0.08);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-logo {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 16px;
+
+  background: #198754;
+  color: #ffffff;
+
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.login-header h1 {
+  margin: 0;
+  color: #17231d;
+  font-size: 28px;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.login-header p {
+  margin: 9px 0 0;
+  color: #718078;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.login-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  color: #29372f;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.login-form input {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 13px 14px;
+
+  border: 1px solid #d7e1db;
+  border-radius: 11px;
+
+  background: #fbfdfc;
+  color: #17231d;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.login-form input::placeholder {
+  color: #9aa69f;
+}
+
+.login-form input:focus {
+  border-color: #198754;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.1);
+}
+
+.login-button {
+  width: 100%;
+  margin-top: 4px;
+
+  padding: 13px 16px;
+
+  border: none;
+  border-radius: 11px;
+
+  background: #198754;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+.login-button:hover {
+  background: #157347;
+  box-shadow: 0 7px 18px rgba(25, 135, 84, 0.18);
+}
+
+.login-button:active {
+  transform: translateY(1px);
+}
+
+.login-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.login-error {
+  padding: 11px 13px;
+
+  border: 1px solid #f1c4c4;
+  border-radius: 10px;
+
+  background: #fff5f5;
+  color: #b42318;
+
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.demo-accounts {
+  margin-top: 28px;
+  padding-top: 22px;
+
+  border-top: 1px solid #e7ece9;
+
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.demo-accounts > p {
+  margin: 0 0 4px;
+
+  color: #718078;
+  font-size: 12px;
+  font-weight: 700;
+
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.demo-accounts button {
+  width: 100%;
+
+  padding: 10px 12px;
+
+  border: 1px solid #dfe7e2;
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: #334139;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.demo-accounts button:hover {
+  background: #f4f9f6;
+  border-color: #b8d4c3;
+}
+
+.demo-accounts button:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================================
+   LOGIN RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 520px) {
+  .login-page {
+    padding: 20px 14px;
+  }
+
+  .login-card {
+    padding: 28px 22px;
+    border-radius: 20px;
+  }
+
+  .login-header h1 {
+    font-size: 24px;
+  }
+}
+
+/* =========================================================
+   TRUCK OPERATOR DASHBOARD
+   ========================================================= */
+
+.truck-dashboard {
+  min-height: 100vh;
+  background: #f5f8f6;
+  color: #17231d;
+}
+
+.truck-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 22px 32px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e3ebe6;
+}
+
+.truck-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: #17231d;
+  font-size: 20px;
+  font-weight: 750;
+}
+
+.truck-title svg {
+  color: #198754;
+}
+
+.truck-header p {
+  margin: 5px 0 0 32px;
+
+  color: #718078;
+  font-size: 13px;
+}
+
+.truck-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 13px;
+
+  border: 1px solid #cce8d7;
+  border-radius: 999px;
+
+  background: #f0faf4;
+  color: #167344;
+
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+  background: #198754;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.truck-content {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+
+  padding: 28px 0 50px;
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+   ========================================================= */
+
+.truck-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+
+  margin-bottom: 20px;
+}
+
+.truck-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  padding: 20px;
+
+  background: #ffffff;
+  border: 1px solid #e3ebe6;
+  border-radius: 16px;
+
+  box-shadow: 0 8px 24px rgba(20, 50, 35, 0.04);
+}
+
+.truck-summary-card span {
+  color: #718078;
+  font-size: 12px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.truck-summary-card strong {
+  color: #17231d;
+  font-size: 25px;
+  font-weight: 750;
+}
+
+
+/* =========================================================
+   SECTION HEADERS
+   ========================================================= */
+
+.truck-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  margin-bottom: 16px;
+}
+
+.truck-section-header h2 {
+  margin: 0;
+
+  color: #17231d;
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.truck-section-header p {
+  margin: 5px 0 0;
+
+  color: #718078;
+  font-size: 13px;
+}
+
+.truck-section-header > svg {
+  color: #198754;
+}
+
+
+/* =========================================================
+   MAP
+   ========================================================= */
+
+.truck-map-card {
+  overflow: hidden;
+
+  margin-bottom: 20px;
+
+  background: #ffffff;
+  border: 1px solid #e3ebe6;
+  border-radius: 18px;
+
+  box-shadow: 0 8px 24px rgba(20, 50, 35, 0.04);
+}
+
+.truck-map-card > .truck-section-header {
+  padding: 20px 22px;
+  margin-bottom: 0;
+
+  border-bottom: 1px solid #e7ece9;
+}
+
+.truck-map {
+  position: relative;
+
+  height: 440px;
+}
+
+.truck-map .city-map {
+  width: 100%;
+  height: 100%;
+}
+
+.truck-map-overlay {
+  position: absolute;
+  z-index: 1000;
+
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  padding: 9px 15px;
+
+  border: 1px solid #dfe7e2;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.95);
+  color: #34433a;
+
+  font-size: 13px;
+  font-weight: 650;
+
+  box-shadow: 0 5px 15px rgba(20, 50, 35, 0.12);
+}
+
+
+/* =========================================================
+   NEXT STOP
+   ========================================================= */
+
+.next-stop-card {
+  margin-bottom: 20px;
+  padding: 22px;
+
+  background: #ffffff;
+  border: 1px solid #e3ebe6;
+  border-radius: 18px;
+
+  box-shadow: 0 8px 24px rgba(20, 50, 35, 0.04);
+}
+
+.next-stop-main {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  padding: 18px;
+
+  background: #f8fbf9;
+  border: 1px solid #e5ede8;
+  border-radius: 14px;
+}
+
+.priority-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 70px;
+  padding: 7px 11px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.priority-high {
+  background: #fff0f0;
+  color: #c53030;
+}
+
+.priority-medium {
+  background: #fff8e8;
+  color: #a66a00;
+}
+
+.priority-low {
+  background: #eef8f1;
+  color: #287b47;
+}
+
+.next-stop-main h3 {
+  margin: 0;
+
+  color: #17231d;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.next-stop-main p {
+  margin: 5px 0 0;
+
+  color: #718078;
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   NEXT STOP META
+   ========================================================= */
+
+.next-stop-meta {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+
+  margin-top: 16px;
+}
+
+.next-stop-meta div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #536158;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.next-stop-meta svg {
+  color: #198754;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.truck-actions {
+  display: flex;
+  gap: 12px;
+
+  margin-top: 20px;
+}
+
+.start-route-button,
+.complete-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 12px 17px;
+
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.start-route-button {
+  border: 1px solid #198754;
+
+  background: #198754;
+  color: #ffffff;
+}
+
+.start-route-button:hover {
+  background: #157347;
+}
+
+.complete-button {
+  border: 1px solid #cfe0d5;
+
+  background: #ffffff;
+  color: #287047;
+}
+
+.complete-button:hover {
+  background: #f1f8f4;
+  border-color: #a9cbb6;
+}
+
+.start-route-button:active,
+.complete-button:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================================
+   ROUTE STOPS
+   ========================================================= */
+
+.route-stops-card {
+  padding: 22px;
+
+  background: #ffffff;
+  border: 1px solid #e3ebe6;
+  border-radius: 18px;
+
+  box-shadow: 0 8px 24px rgba(20, 50, 35, 0.04);
+}
+
+.route-stop-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.route-stop {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 15px 4px;
+
+  border-bottom: 1px solid #edf1ee;
+}
+
+.route-stop:last-child {
+  border-bottom: none;
+}
+
+.route-stop-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #eaf6ee;
+  color: #198754;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.route-stop-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.route-stop-info strong {
+  color: #25332b;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.route-stop-info span {
+  color: #7a877f;
+  font-size: 12px;
+}
+
+.route-stop-distance {
+  color: #536158;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-stop {
+  padding: 30px 10px;
+
+  text-align: center;
+
+  color: #7a877f;
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 800px) {
+  .truck-header {
+    padding: 18px 20px;
+  }
+
+  .truck-content {
+    width: min(100% - 28px, 700px);
+    padding-top: 20px;
+  }
+
+  .truck-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .truck-map {
+    height: 360px;
+  }
+}
+
+@media (max-width: 560px) {
+  .truck-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .truck-status {
+    align-self: flex-start;
+  }
+
+  .truck-actions {
+    flex-direction: column;
+  }
+
+  .start-route-button,
+  .complete-button {
+    width: 100%;
+  }
+
+  .next-stop-main {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .next-stop-meta {
+    flex-wrap: wrap;
+    gap: 12px 20px;
+  }
+
+  .truck-map {
+    height: 320px;
+  }
+
+  .route-stop-distance {
+    display: none;
+  }
+}

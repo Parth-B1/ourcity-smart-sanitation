@@ -210,7 +210,7 @@ function formatDate(isoDate: string): string {
   if (diffMinutes < 1) return "Just now";
   if (diffMinutes < 60) return `${diffMinutes} min ago`;
   if (diffMinutes < 1440) {
-    const hours = Math.floor(diffMinutes / 60);
+    
     return `Today, ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
   }
 
