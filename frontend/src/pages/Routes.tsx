@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import {
+  getHotspots,
+  type Hotspot,
+} from "../services/hotspotService";
+import {
   ArrowLeft,
   CheckCircle2,
   Clock3,
@@ -20,30 +24,42 @@ import {
 
 function Routes() {
   const [route, setRoute] = useState<OptimizedRoute | null>(null);
+  const [hotspots, setHotspots] = useState<Hotspot[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function loadRoute() {
+    async function loadData() {
       try {
         setLoading(true);
         setError("");
 
-        const data = await getOptimizedRoute(
-          21.1458,
-          79.0882,
+        const [routeData, hotspotData] =
+          await Promise.all([
+            getOptimizedRoute(
+              21.1458,
+              79.0882,
+            ),
+            getHotspots(),
+          ]);
+
+        setRoute(routeData);
+        setHotspots(hotspotData);
+      } catch (err) {
+        console.error(
+          "Collection intelligence loading error:",
+          err,
         );
 
-        setRoute(data);
-      } catch (err) {
-        console.error("Route loading error:", err);
-        setError("Unable to load collection route.");
+        setError(
+          "Unable to load collection intelligence.",
+        );
       } finally {
         setLoading(false);
       }
     }
 
-    loadRoute();
+    loadData();
   }, []);
 
   const firstStop = route?.stops[0];
@@ -194,6 +210,8 @@ function Routes() {
                 showHotspots={true}
                 showReports={false}
                 showRoute={true}
+                routeCoordinates={route?.route_coordinates ?? []}
+                hotspots={hotspots}
               />
             </div>
 

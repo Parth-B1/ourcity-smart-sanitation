@@ -2915,3 +2915,15 @@ a {
   position: relative;
   z-index: 0;
 }
+.dashboard-map {
+  height: 360px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.dashboard-map .city-map,
+.dashboard-map .leaflet-container {
+  height: 100%;
+  width: 100%;
+}

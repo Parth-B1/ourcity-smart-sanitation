@@ -1,53 +1,149 @@
+import { useEffect, useState } from "react";
 import {
   AlertTriangle,
   BarChart3,
   Bell,
   CheckCircle2,
   Clock3,
+  Loader2,
   Map,
   RefreshCw,
   Sparkles,
   Truck,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import Navbar from "../components/common/Navbar";
 import StatCard from "../components/dashboard/StatCard";
 import HotspotCard from "../components/dashboard/HotspotCard";
 import TruckCard from "../components/dashboard/TruckCard";
 import ReportTable from "../components/dashboard/ReportTable";
+import CityMap from "../components/map/CityMap";
 
-const reports = [
-  {
-    id: "OS-00842",
-    location: "Dharampeth",
-    category: "Mixed waste",
-    priority: "High" as const,
-    age: "18 min",
-  },
-  {
-    id: "OS-00841",
-    location: "Sadar",
-    category: "Overflowing bin",
-    priority: "High" as const,
-    age: "42 min",
-  },
-  {
-    id: "OS-00839",
-    location: "Civil Lines",
-    category: "Plastic waste",
-    priority: "Medium" as const,
-    age: "1 hr",
-  },
-  {
-    id: "OS-00836",
-    location: "Manish Nagar",
-    category: "Illegal dumping",
-    priority: "Medium" as const,
-    age: "2 hrs",
-  },
-];
+import {
+  getReports,
+  type ReportResponse,
+} from "../services/reportService";
+
+import {
+  getHotspots,
+  type Hotspot,
+} from "../services/hotspotService";
 
 function Dashboard() {
+  const [reports, setReports] = useState<ReportResponse[]>([]);
+  const [hotspots, setHotspots] = useState<Hotspot[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const [reportData, hotspotData] =
+        await Promise.all([
+          getReports(),
+          getHotspots(),
+        ]);
+
+      setReports(reportData);
+      setHotspots(hotspotData);
+    } catch (err) {
+      console.error(
+        "Dashboard loading error:",
+        err,
+      );
+
+      setError(
+        "Unable to load dashboard data.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  // -----------------------------------------------
+  // Statistics
+  // -----------------------------------------------
+
+  const totalReports = reports.length;
+
+  const pendingReports = reports.filter(
+    (report) =>
+      report.status !== "resolved",
+  );
+
+  const highPriorityPending =
+    pendingReports.filter(
+      (report) =>
+        report.priority === "high" ||
+        report.priority === "critical",
+    ).length;
+
+  // -----------------------------------------------
+  // Report table
+  // -----------------------------------------------
+
+  const tableReports = reports
+    .slice(0, 5)
+    .map((report) => {
+      const age = getReportAge(
+        report.created_at,
+      );
+
+      const formattedPriority =
+        report.priority.charAt(0).toUpperCase() +
+        report.priority.slice(1);
+
+      return {
+        id: report.report_code,
+        location: report.location,
+        category: report.category,
+        priority: (
+          formattedPriority === "Critical"
+            ? "High"
+            : formattedPriority
+        ) as "High" | "Medium" | "Low",
+        age,
+      };
+    });
+
+  // -----------------------------------------------
+  // Hotspot cards
+  // -----------------------------------------------
+
+  const topHotspots = hotspots
+    .slice(0, 4)
+    .map((hotspot, index) => {
+      const priority =
+        hotspot.priority === "high" ||
+        hotspot.priority === "critical"
+          ? "High"
+          : hotspot.priority === "medium"
+            ? "Medium"
+            : "Low";
+
+      return {
+        name: `Hotspot ${index + 1}`,
+        reports: hotspot.report_count,
+        priority:
+          priority as "High" | "Medium" | "Low",
+        trend: `${hotspot.high_priority_reports} high priority`,
+        coords: `${hotspot.latitude.toFixed(
+          4,
+        )}, ${hotspot.longitude.toFixed(4)}`,
+      };
+    });
+
+  // -----------------------------------------------
+  // Dashboard
+  // -----------------------------------------------
+
   return (
     <div className="app dashboard-app">
       <Navbar />
@@ -64,43 +160,96 @@ function Dashboard() {
                 LIVE MUNICIPAL INTELLIGENCE
               </div>
 
-              <h1>City sanitation overview</h1>
+              <h1>
+                City sanitation overview
+              </h1>
 
               <p>
-                Monitor reports, identify waste hotspots, and coordinate
-                collection activity across the city.
+                Monitor reports, identify waste
+                hotspots, and coordinate collection
+                activity across the city.
               </p>
             </div>
 
-            <button className="refresh-button">
+            <button
+              className="refresh-button"
+              onClick={loadData}
+              type="button"
+            >
               <RefreshCw size={15} />
               Refresh data
             </button>
           </div>
+
+          {/* Error */}
+
+          {error && (
+            <div className="route-error">
+              <strong>
+                Data unavailable
+              </strong>
+
+              <span>{error}</span>
+            </div>
+          )}
 
           {/* Stats */}
 
           <section className="dashboard-stats">
             <StatCard
               label="Total reports"
-              value="1,284"
-              change="+12% this week"
+              value={
+                loading
+                  ? "..."
+                  : String(totalReports)
+              }
+              change={
+                loading
+                  ? "Loading..."
+                  : `${pendingReports.length} pending`
+              }
               icon={BarChart3}
               variant="green"
             />
 
             <StatCard
               label="Pending reports"
-              value="126"
-              change="18 high priority"
+              value={
+                loading
+                  ? "..."
+                  : String(
+                      pendingReports.length,
+                    )
+              }
+              change={
+                loading
+                  ? "Loading..."
+                  : `${highPriorityPending} high priority`
+              }
               icon={Clock3}
               variant="orange"
             />
 
             <StatCard
               label="Waste hotspots"
-              value="42"
-              change="+4 identified"
+              value={
+                loading
+                  ? "..."
+                  : String(hotspots.length)
+              }
+              change={
+                loading
+                  ? "Loading..."
+                  : `${
+                      hotspots.filter(
+                        (hotspot) =>
+                          hotspot.priority ===
+                          "high" ||
+                          hotspot.priority ===
+                          "critical",
+                      ).length
+                    } high priority`
+              }
               icon={AlertTriangle}
               variant="red"
             />
@@ -122,71 +271,69 @@ function Dashboard() {
             </div>
 
             <div>
-              <span>AI SANITATION INSIGHT</span>
+              <span>
+                AI SANITATION INSIGHT
+              </span>
 
               <h2>
-                Dharampeth and Sadar are showing unusually high waste
-                activity today.
+                {hotspots.length > 0
+                  ? `${hotspots.length} waste hotspot${
+                      hotspots.length !== 1
+                        ? "s"
+                        : ""
+                    } detected across the city.`
+                  : "No active waste hotspots detected. The city is clean."}
               </h2>
 
               <p>
-                Based on recent reports, historical patterns, and current
-                collection activity, these areas may require additional
-                collection capacity.
+                Based on recent reports, historical
+                patterns, and current collection
+                activity, these areas may require
+                additional collection capacity.
               </p>
             </div>
 
-            <button>
-              View analysis
-            </button>
+            <Link to="/hotspots">
+              <button type="button">
+                View analysis
+              </button>
+            </Link>
           </section>
 
           {/* Main grid */}
 
           <section className="dashboard-main-grid">
 
-            {/* Map */}
+            {/* REAL MAP */}
 
             <div className="dashboard-panel map-panel">
               <div className="panel-header">
                 <div>
-                  <h2>Waste hotspots</h2>
-                  <span>Live activity across monitored areas</span>
+                  <h2>
+                    Waste hotspots
+                  </h2>
+
+                  <span>
+                    Live activity across monitored
+                    areas
+                  </span>
                 </div>
 
-                <button>
-                  <Map size={15} />
-                  Full map
-                </button>
+                <Link to="/hotspots">
+                  <button type="button">
+                    <Map size={15} />
+                    Full map
+                  </button>
+                </Link>
               </div>
 
-              <div className="fake-map">
-                <div className="map-road road-one" />
-                <div className="map-road road-two" />
-                <div className="map-road road-three" />
-                <div className="map-road road-four" />
-
-                <div className="map-label label-one">
-                  Dharampeth
-                </div>
-
-                <div className="map-label label-two">
-                  Sadar
-                </div>
-
-                <div className="map-label label-three">
-                  Civil Lines
-                </div>
-
-                <div className="map-label label-four">
-                  Manish Nagar
-                </div>
-
-                <span className="hotspot-dot high dot-one" />
-                <span className="hotspot-dot high dot-two" />
-                <span className="hotspot-dot medium dot-three" />
-                <span className="hotspot-dot medium dot-four" />
-                <span className="hotspot-dot low dot-five" />
+              <div className="dashboard-map">
+                <CityMap
+                  showHotspots={true}
+                  showReports={true}
+                  showRoute={false}
+                  hotspots={hotspots}
+                />
               </div>
 
               <div className="map-legend">
@@ -212,39 +359,60 @@ function Dashboard() {
             <div className="dashboard-panel">
               <div className="panel-header">
                 <div>
-                  <h2>Top hotspots</h2>
-                  <span>Areas needing attention</span>
+                  <h2>
+                    Top hotspots
+                  </h2>
+
+                  <span>
+                    Areas needing attention
+                  </span>
                 </div>
               </div>
 
               <div className="hotspot-list">
-                <HotspotCard
-                  name="Dharampeth"
-                  reports={38}
-                  priority="High"
-                  trend="+24% activity"
-                />
+                {loading ? (
+                  <div className="route-loading">
+                    <Loader2
+                      className="spin"
+                      size={20}
+                    />
 
-                <HotspotCard
-                  name="Sadar"
-                  reports={31}
-                  priority="High"
-                  trend="+17% activity"
-                />
+                    <span>
+                      Loading hotspots...
+                    </span>
+                  </div>
+                ) : topHotspots.length ===
+                  0 ? (
+                  <div className="route-empty">
+                    <CheckCircle2 size={22} />
 
-                <HotspotCard
-                  name="Civil Lines"
-                  reports={22}
-                  priority="Medium"
-                  trend="+9% activity"
-                />
+                    <strong>
+                      No active hotspots
+                    </strong>
 
-                <HotspotCard
-                  name="Manish Nagar"
-                  reports={16}
-                  priority="Medium"
-                  trend="+5% activity"
-                />
+                    <span>
+                      All areas are clean.
+                    </span>
+                  </div>
+                ) : (
+                  topHotspots.map(
+                    (hotspot, index) => (
+                      <HotspotCard
+                        key={index}
+                        name={hotspot.name}
+                        reports={
+                          hotspot.reports
+                        }
+                        priority={
+                          hotspot.priority
+                        }
+                        trend={
+                          hotspot.trend
+                        }
+                      />
+                    ),
+                  )
+                )}
               </div>
             </div>
           </section>
@@ -256,23 +424,65 @@ function Dashboard() {
             <div className="dashboard-panel reports-panel">
               <div className="panel-header">
                 <div>
-                  <h2>Priority reports</h2>
-                  <span>Reports requiring municipal attention</span>
+                  <h2>
+                    Priority reports
+                  </h2>
+
+                  <span>
+                    Reports requiring municipal
+                    attention
+                  </span>
                 </div>
 
-                <button>
-                  View all
-                </button>
+                <Link to="/my-reports">
+                  <button type="button">
+                    View all
+                  </button>
+                </Link>
               </div>
 
-              <ReportTable reports={reports} />
+              {loading ? (
+                <div className="route-loading">
+                  <Loader2
+                    className="spin"
+                    size={20}
+                  />
+
+                  <span>
+                    Loading reports...
+                  </span>
+                </div>
+              ) : tableReports.length ===
+                0 ? (
+                <div className="route-empty">
+                  <CheckCircle2 size={22} />
+
+                  <strong>
+                    No reports yet
+                  </strong>
+
+                  <span>
+                    Submit a report to get
+                    started.
+                  </span>
+                </div>
+              ) : (
+                <ReportTable
+                  reports={tableReports}
+                />
+              )}
             </div>
 
             <div className="dashboard-panel">
               <div className="panel-header">
                 <div>
-                  <h2>Collection fleet</h2>
-                  <span>Current vehicle activity</span>
+                  <h2>
+                    Collection fleet
+                  </h2>
+
+                  <span>
+                    Current vehicle activity
+                  </span>
                 </div>
 
                 <Truck size={18} />
@@ -315,25 +525,57 @@ function Dashboard() {
           <section className="dashboard-summary">
             <div>
               <CheckCircle2 size={18} />
+
               <div>
-                <strong>94%</strong>
-                <span>Resolution rate</span>
+                <strong>
+                  {loading
+                    ? "..."
+                    : totalReports > 0
+                      ? `${Math.round(
+                          (reports.filter(
+                            (report) =>
+                              report.status ===
+                              "resolved",
+                          ).length /
+                            totalReports) *
+                            100,
+                        )}%`
+                      : "—"}
+                </strong>
+
+                <span>
+                  Resolution rate
+                </span>
               </div>
             </div>
 
             <div>
               <Clock3 size={18} />
+
               <div>
-                <strong>3.2 hrs</strong>
-                <span>Average response time</span>
+                <strong>
+                  3.2 hrs
+                </strong>
+
+                <span>
+                  Average response time
+                </span>
               </div>
             </div>
 
             <div>
               <Bell size={18} />
+
               <div>
-                <strong>284</strong>
-                <span>Citizen alerts sent today</span>
+                <strong>
+                  {loading
+                    ? "..."
+                    : hotspots.length}
+                </strong>
+
+                <span>
+                  Active hotspots
+                </span>
               </div>
             </div>
           </section>
@@ -342,6 +584,42 @@ function Dashboard() {
       </main>
     </div>
   );
+}
+
+function getReportAge(
+  createdAt: string,
+): string {
+  const now = new Date();
+
+  const created = new Date(
+    createdAt,
+  );
+
+  const diffMs =
+    now.getTime() -
+    created.getTime();
+
+  const diffMinutes = Math.floor(
+    diffMs / 60000,
+  );
+
+  if (diffMinutes < 1) {
+    return "Just now";
+  }
+
+  if (diffMinutes < 60) {
+    return `${diffMinutes} min`;
+  }
+
+  if (diffMinutes < 1440) {
+    return `${Math.floor(
+      diffMinutes / 60,
+    )} hr`;
+  }
+
+  return `${Math.floor(
+    diffMinutes / 1440,
+  )} days`;
 }
 
 export default Dashboard;

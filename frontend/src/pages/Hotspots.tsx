@@ -1,10 +1,49 @@
-import { ArrowLeft, Layers, MapPin, Route } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Layers, Loader2, MapPin, Route } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import Navbar from "../components/common/Navbar";
 import CityMap from "../components/map/CityMap";
 
+import {
+  getHotspots,
+  type Hotspot,
+} from "../services/hotspotService";
+
 function Hotspots() {
+  const [hotspots, setHotspots] = useState<Hotspot[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const data = await getHotspots();
+        setHotspots(data);
+      } catch (err) {
+        console.error("Hotspot loading error:", err);
+        setError("Unable to load hotspot data.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  const totalReports = hotspots.reduce(
+    (sum, h) => sum + h.report_count,
+    0,
+  );
+
+  const highPriorityTotal = hotspots.reduce(
+    (sum, h) => sum + h.high_priority_reports,
+    0,
+  );
+
   return (
     <div className="app">
       <Navbar />
@@ -49,29 +88,51 @@ function Hotspots() {
             </div>
           </div>
 
+          {error && (
+            <div className="route-error">
+              <strong>Data unavailable</strong>
+              <span>{error}</span>
+            </div>
+          )}
+
           <div className="full-map-wrapper">
-            <CityMap />
+            {loading ? (
+              <div className="route-loading" style={{ minHeight: 400 }}>
+                <Loader2 className="spin" size={24} />
+                <span>Loading hotspot map...</span>
+              </div>
+            ) : (
+              <CityMap
+                showHotspots={true}
+                showReports={true}
+                hotspots={hotspots}
+              />
+            )}
           </div>
 
           <div className="map-info">
             <div>
-              <strong>42</strong>
+              <strong>{loading ? "..." : hotspots.length}</strong>
               <span>Active hotspots</span>
             </div>
 
             <div>
-              <strong>126</strong>
-              <span>Pending reports</span>
+              <strong>{loading ? "..." : totalReports}</strong>
+              <span>Total reports</span>
             </div>
 
             <div>
-              <strong>18</strong>
-              <span>Vehicles active</span>
+              <strong>{loading ? "..." : highPriorityTotal}</strong>
+              <span>High priority</span>
             </div>
 
             <div>
-              <strong>94%</strong>
-              <span>Resolution rate</span>
+              <strong>
+                {loading
+                  ? "..."
+                  : hotspots.filter((h) => h.priority === "high").length}
+              </strong>
+              <span>Critical zones</span>
             </div>
           </div>
 

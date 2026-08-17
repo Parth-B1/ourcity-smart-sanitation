@@ -10,41 +10,62 @@ import {
 import ImageUpload from "./ImageUpload";
 import LocationPicker from "./LocationPicker";
 
+import {
+  createReport,
+  type ReportResponse,
+} from "../../services/reportService";
+
 function ReportForm() {
   const [image, setImage] = useState<File | null>(null);
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
 
-  const [analyzing, setAnalyzing] = useState(false);
-  const [analyzed, setAnalyzed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [result, setResult] = useState<ReportResponse | null>(null);
 
-  const analyzeWaste = () => {
-    if (!image) return;
-
-    setAnalyzing(true);
-    setAnalyzed(false);
-
-    // Temporary frontend simulation.
-    // Later this will call backend AI.
-    setTimeout(() => {
-      setAnalyzing(false);
-      setAnalyzed(true);
-
-      if (!category) {
-        setCategory("Mixed household waste");
-      }
-    }, 1500);
-  };
-
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    setSubmitted(true);
+    setSubmitting(true);
+    setSubmitError("");
+
+    try {
+      // Parse latitude/longitude from location string if available
+      let latitude: number | undefined;
+      let longitude: number | undefined;
+
+      const coordMatch = location.match(
+        /^(-?\d+\.?\d*),\s*(-?\d+\.?\d*)$/,
+      );
+
+      if (coordMatch) {
+        latitude = parseFloat(coordMatch[1]);
+        longitude = parseFloat(coordMatch[2]);
+      }
+
+      const response = await createReport({
+        category: category || "Other",
+        description: description || undefined,
+        location: location,
+        latitude,
+        longitude,
+      });
+
+      setResult(response);
+      setSubmitted(true);
+    } catch {
+      setSubmitError(
+        "Unable to submit report. Please check your connection and try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  if (submitted) {
+  if (submitted && result) {
     return (
       <div className="report-success">
         <div className="success-icon">
@@ -62,8 +83,38 @@ function ReportForm() {
 
         <div className="ticket-number">
           <span>Report ID</span>
-          <strong>OS-2026-00842</strong>
+          <strong>{result.report_code}</strong>
         </div>
+
+        {result.ai_category && (
+          <div className="ai-result">
+            <div className="ai-result-icon">
+              <Sparkles size={20} />
+            </div>
+
+            <div className="ai-result-content">
+              <div className="ai-result-title">
+                <span>AI ANALYSIS</span>
+                <strong>
+                  {result.ai_confidence
+                    ? `${Math.round(result.ai_confidence * 100)}% confidence`
+                    : ""}
+                </strong>
+              </div>
+
+              <h3>{result.ai_category} detected</h3>
+
+              <p>{result.ai_reasoning}</p>
+
+              <div className="severity">
+                <AlertTriangle size={15} />
+                <span>
+                  Priority: {result.priority.charAt(0).toUpperCase() + result.priority.slice(1)}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
 
         <button
           type="button"
@@ -91,58 +142,9 @@ function ReportForm() {
         <ImageUpload
           onImageChange={(file) => {
             setImage(file);
-            setAnalyzed(false);
           }}
         />
-
-        {image && !analyzed && (
-          <button
-            type="button"
-            className="ai-analyze-button"
-            onClick={analyzeWaste}
-            disabled={analyzing}
-          >
-            {analyzing ? (
-              <>
-                <Loader2 className="spin" size={18} />
-                AI is analyzing...
-              </>
-            ) : (
-              <>
-                <Sparkles size={18} />
-                Analyze with AI
-              </>
-            )}
-          </button>
-        )}
       </div>
-
-      {analyzed && (
-        <div className="ai-result">
-          <div className="ai-result-icon">
-            <Sparkles size={20} />
-          </div>
-
-          <div className="ai-result-content">
-            <div className="ai-result-title">
-              <span>AI ANALYSIS</span>
-              <strong>98% confidence</strong>
-            </div>
-
-            <h3>Mixed household waste detected</h3>
-
-            <p>
-              The system identified a potential sanitation issue requiring
-              collection attention.
-            </p>
-
-            <div className="severity">
-              <AlertTriangle size={15} />
-              <span>Priority: High</span>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className="form-section">
         <div className="form-section-heading">
@@ -198,13 +200,29 @@ function ReportForm() {
         </label>
       </div>
 
+      {submitError && (
+        <div className="route-error">
+          <strong>Submission failed</strong>
+          <span>{submitError}</span>
+        </div>
+      )}
+
       <button
         type="submit"
         className="submit-report-button"
-        disabled={!image || !location}
+        disabled={!image || !location || submitting}
       >
-        <Send size={18} />
-        Submit Report
+        {submitting ? (
+          <>
+            <Loader2 className="spin" size={18} />
+            Submitting...
+          </>
+        ) : (
+          <>
+            <Send size={18} />
+            Submit Report
+          </>
+        )}
       </button>
     </form>
   );

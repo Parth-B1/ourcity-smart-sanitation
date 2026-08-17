@@ -1,75 +1,105 @@
 import { CircleMarker, Popup } from "react-leaflet";
 
-const hotspots = [
-  {
-    id: 1,
-    name: "Dharampeth",
-    position: [21.1525, 79.0808] as [number, number],
-    reports: 38,
-    priority: "High",
-  },
-  {
-    id: 2,
-    name: "Sadar",
-    position: [21.1615, 79.083] as [number, number],
-    reports: 31,
-    priority: "High",
-  },
-  {
-    id: 3,
-    name: "Civil Lines",
-    position: [21.1577, 79.0715] as [number, number],
-    reports: 22,
-    priority: "Medium",
-  },
-  {
-    id: 4,
-    name: "Manish Nagar",
-    position: [21.1165, 79.0735] as [number, number],
-    reports: 16,
-    priority: "Medium",
-  },
-];
+import type { Hotspot } from "../../services/hotspotService";
+
+interface HotspotLayerProps {
+  hotspots: Hotspot[];
+}
 
 function getHotspotColor(priority: string) {
-  switch (priority) {
-    case "High":
+  switch (priority.toLowerCase()) {
+    case "high":
+    case "critical":
       return "#dc4f3d";
-    case "Medium":
+
+    case "medium":
       return "#e2a03d";
+
+    case "low":
     default:
       return "#52a46f";
   }
 }
 
-function HotspotLayer() {
+function getHotspotRadius(priority: string) {
+  switch (priority.toLowerCase()) {
+    case "high":
+    case "critical":
+      return 14;
+
+    case "medium":
+      return 11;
+
+    case "low":
+    default:
+      return 9;
+  }
+}
+
+function HotspotLayer({
+  hotspots,
+}: HotspotLayerProps) {
   return (
     <>
-      {hotspots.map((hotspot) => (
-        <CircleMarker
-          key={hotspot.id}
-          center={hotspot.position}
-          radius={12}
-          pathOptions={{
-            color: "#ffffff",
-            weight: 3,
-            fillColor: getHotspotColor(hotspot.priority),
-            fillOpacity: 0.85,
-          }}
-        >
-          <Popup>
-            <strong>{hotspot.name}</strong>
+      {hotspots.map((hotspot, index) => {
+        const color = getHotspotColor(
+          hotspot.priority,
+        );
 
-            <br />
+        const radius = getHotspotRadius(
+          hotspot.priority,
+        );
 
-            {hotspot.reports} reports
+        return (
+          <CircleMarker
+            key={`${hotspot.latitude}-${hotspot.longitude}-${index}`}
+            center={[
+              hotspot.latitude,
+              hotspot.longitude,
+            ]}
+            radius={radius}
+            pathOptions={{
+              color: "#ffffff",
+              weight: 3,
+              fillColor: color,
+              fillOpacity: 0.85,
+            }}
+          >
+            <Popup>
+              <div className="hotspot-popup">
+                <strong>Waste Hotspot</strong>
 
-            <br />
+                <div>
+                  <span>Priority:</span>{" "}
+                  <strong>
+                    {hotspot.priority.toUpperCase()}
+                  </strong>
+                </div>
 
-            Priority: {hotspot.priority}
-          </Popup>
-        </CircleMarker>
-      ))}
+                <div>
+                  <span>Total reports:</span>{" "}
+                  {hotspot.report_count}
+                </div>
+
+                <div>
+                  <span>High priority:</span>{" "}
+                  {hotspot.high_priority_reports}
+                </div>
+
+                <div>
+                  <span>Latitude:</span>{" "}
+                  {hotspot.latitude.toFixed(5)}
+                </div>
+
+                <div>
+                  <span>Longitude:</span>{" "}
+                  {hotspot.longitude.toFixed(5)}
+                </div>
+              </div>
+            </Popup>
+          </CircleMarker>
+        );
+      })}
     </>
   );
 }

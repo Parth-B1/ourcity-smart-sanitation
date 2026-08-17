@@ -14,8 +14,13 @@ export interface OptimizedRoute {
     latitude: number;
     longitude: number;
   };
+
   total_distance_km: number;
+
   estimated_time_minutes: number;
+
+  route_coordinates: [number, number][];
+
   stops: RouteStop[];
 }
 

@@ -21,4 +21,5 @@ class RouteResponse(BaseModel):
     truck: TruckLocation
     total_distance_km: float
     estimated_time_minutes: int
+    route_coordinates: list[list[float]]
     stops: list[RouteStop]

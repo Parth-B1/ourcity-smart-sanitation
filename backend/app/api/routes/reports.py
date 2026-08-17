@@ -20,11 +20,6 @@ router = APIRouter(
     response_model=ReportResponse,
     status_code=201,
 )
-@router.post(
-    "/",
-    response_model=ReportResponse,
-    status_code=201,
-)
 def create_report(
     report_data: ReportCreate,
     db: Session = Depends(get_db),
@@ -61,27 +56,6 @@ def create_report(
     report.report_code = (
         f"OS-{report.created_at.year}-{report.id:05d}"
     )
-
-    db.commit()
-    db.refresh(report)
-
-    return report
-    report = Report(
-        report_code="TEMP",
-        category=report_data.category,
-        description=report_data.description,
-        location=report_data.location,
-        latitude=report_data.latitude,
-        longitude=report_data.longitude,
-        status="submitted",
-        priority="medium",
-    )
-
-    db.add(report)
-    db.commit()
-    db.refresh(report)
-
-    report.report_code = f"OS-{report.created_at.year}-{report.id:05d}"
 
     db.commit()
     db.refresh(report)
