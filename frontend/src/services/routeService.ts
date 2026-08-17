@@ -1,3 +1,4 @@
+import { getToken } from "./authService";
 export interface RouteStop {
   stop_number: number;
   latitude: number;
@@ -36,6 +37,48 @@ export async function getOptimizedRoute(
 
   if (!response.ok) {
     throw new Error("Failed to fetch optimized route");
+  }
+
+  return response.json();
+}
+
+export async function completeCollection(
+  latitude: number,
+  longitude: number,
+) {
+  const token = getToken();
+
+  if (!token) {
+    throw new Error(
+      "You are not authenticated.",
+    );
+  }
+
+  const response = await fetch(
+    `${API_URL}/api/trucks/collection-complete`,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+
+      body: JSON.stringify({
+        latitude,
+        longitude,
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    const error =
+      await response.json().catch(() => null);
+
+    throw new Error(
+      error?.detail ||
+        "Failed to complete collection",
+    );
   }
 
   return response.json();

@@ -40,6 +40,7 @@ def generate_hotspots(
         .filter(
             Report.latitude.isnot(None),
             Report.longitude.isnot(None),
+            Report.status != "resolved",
         )
         .all()
     )
