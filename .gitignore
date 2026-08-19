@@ -75,3 +75,7 @@ backend/*.db
 backend/*.sqlite
 backend/*.sqlite3
 backend/venv/
+
+*.db
+*.sqlite
+*.sqlite3
