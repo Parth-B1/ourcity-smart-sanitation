@@ -1,6 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import { Bell, Menu, Recycle } from "lucide-react";
 import { useState } from "react";
+import { LogOut } from "lucide-react";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,6 +12,13 @@ function Navbar() {
     { name: "My Reports", path: "/my-reports" },
     { name: "Dashboard", path: "/dashboard" },
   ];
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    window.location.href = "/login";
+  };
 
   return (
     <header className="navbar">
@@ -45,7 +53,14 @@ function Navbar() {
             <Bell size={20} />
             <span className="notification-dot" />
           </button>
-
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="logout-button"
+          >
+            <LogOut size={17} />
+            <span>Logout</span>
+          </button>
           <button
             className="menu-button"
             onClick={() => setMenuOpen(!menuOpen)}

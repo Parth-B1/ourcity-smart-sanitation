@@ -76,3 +76,46 @@ def get_nearby_collection(
             "completed_at": event.completed_at,
         },
     }
+
+@router.get("/approaching")
+def get_approaching_collection(
+    latitude: float,
+    longitude: float,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(
+        require_role("citizen")
+    ),
+):
+    """
+    Return the next collection stop near
+    the citizen's location.
+    """
+
+    from app.services.route_service import generate_route
+
+    route = generate_route(
+        db=db,
+        truck_latitude=latitude,
+        truck_longitude=longitude,
+    )
+
+    if not route["stops"]:
+        return {
+            "approaching": False,
+            "truck_id": None,
+            "estimated_minutes": None,
+            "latitude": None,
+            "longitude": None,
+        }
+
+    next_stop = route["stops"][0]
+
+    return {
+        "approaching": True,
+        "truck_id": "truck104",
+        "estimated_minutes": (
+            next_stop["travel_time_minutes"]
+        ),
+        "latitude": next_stop["latitude"],
+        "longitude": next_stop["longitude"],
+    }

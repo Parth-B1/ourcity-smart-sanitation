@@ -27,15 +27,44 @@ const API_URL = "http://127.0.0.1:8000";
 
 export async function createReport(
   data: ReportCreate,
+  image?: File | null,
 ): Promise<ReportResponse> {
+  const formData = new FormData();
+
+  formData.append("category", data.category);
+
+  if (data.description) {
+    formData.append(
+      "description",
+      data.description,
+    );
+  }
+
+  formData.append("location", data.location);
+
+  if (data.latitude !== undefined) {
+    formData.append(
+      "latitude",
+      String(data.latitude),
+    );
+  }
+
+  if (data.longitude !== undefined) {
+    formData.append(
+      "longitude",
+      String(data.longitude),
+    );
+  }
+
+  if (image) {
+    formData.append("image", image);
+  }
+
   const response = await fetch(
     `${API_URL}/api/reports/`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      body: formData,
     },
   );
 
@@ -45,7 +74,6 @@ export async function createReport(
 
   return response.json();
 }
-
 export async function getReports(): Promise<
   ReportResponse[]
 > {
@@ -62,6 +90,7 @@ export async function getReports(): Promise<
 
 export async function getReport(
   id: number,
+  
 ): Promise<ReportResponse> {
   const response = await fetch(
     `${API_URL}/api/reports/${id}`,

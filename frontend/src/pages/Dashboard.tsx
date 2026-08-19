@@ -20,15 +20,9 @@ import TruckCard from "../components/dashboard/TruckCard";
 import ReportTable from "../components/dashboard/ReportTable";
 import CityMap from "../components/map/CityMap";
 
-import {
-  getReports,
-  type ReportResponse,
-} from "../services/reportService";
+import { getReports, type ReportResponse } from "../services/reportService";
 
-import {
-  getHotspots,
-  type Hotspot,
-} from "../services/hotspotService";
+import { getHotspots, type Hotspot } from "../services/hotspotService";
 
 function Dashboard() {
   const [reports, setReports] = useState<ReportResponse[]>([]);
@@ -41,23 +35,17 @@ function Dashboard() {
       setLoading(true);
       setError("");
 
-      const [reportData, hotspotData] =
-        await Promise.all([
-          getReports(),
-          getHotspots(),
-        ]);
+      const [reportData, hotspotData] = await Promise.all([
+        getReports(),
+        getHotspots(),
+      ]);
 
       setReports(reportData);
       setHotspots(hotspotData);
     } catch (err) {
-      console.error(
-        "Dashboard loading error:",
-        err,
-      );
+      console.error("Dashboard loading error:", err);
 
-      setError(
-        "Unable to load dashboard data.",
-      );
+      setError("Unable to load dashboard data.");
     } finally {
       setLoading(false);
     }
@@ -73,72 +61,58 @@ function Dashboard() {
 
   const totalReports = reports.length;
 
+  const resolvedReports = reports.filter(
+    (report) => report.status === "resolved",
+  ).length;
+
   const pendingReports = reports.filter(
-    (report) =>
-      report.status !== "resolved",
+    (report) => report.status !== "resolved",
   );
 
-  const highPriorityPending =
-    pendingReports.filter(
-      (report) =>
-        report.priority === "high" ||
-        report.priority === "critical",
-    ).length;
-
+  const highPriorityPending = pendingReports.filter(
+    (report) => report.priority === "high" || report.priority === "critical",
+  ).length;
   // -----------------------------------------------
   // Report table
   // -----------------------------------------------
 
-  const tableReports = reports
-    .slice(0, 5)
-    .map((report) => {
-      const age = getReportAge(
-        report.created_at,
-      );
+  const tableReports = reports.slice(0, 5).map((report) => {
+    const age = getReportAge(report.created_at);
 
-      const formattedPriority =
-        report.priority.charAt(0).toUpperCase() +
-        report.priority.slice(1);
+    const formattedPriority =
+      report.priority.charAt(0).toUpperCase() + report.priority.slice(1);
 
-      return {
-        id: report.report_code,
-        location: report.location,
-        category: report.category,
-        priority: (
-          formattedPriority === "Critical"
-            ? "High"
-            : formattedPriority
-        ) as "High" | "Medium" | "Low",
-        age,
-      };
-    });
+    return {
+      id: report.report_code,
+      location: report.location,
+      category: report.category,
+      priority: (formattedPriority === "Critical"
+        ? "High"
+        : formattedPriority) as "High" | "Medium" | "Low",
+      age,
+    };
+  });
 
   // -----------------------------------------------
   // Hotspot cards
   // -----------------------------------------------
 
-  const topHotspots = hotspots
-    .slice(0, 4)
-    .map((hotspot, index) => {
-      const priority =
-        hotspot.priority === "high" ||
-        hotspot.priority === "critical"
-          ? "High"
-          : hotspot.priority === "medium"
-            ? "Medium"
-            : "Low";
+  const topHotspots = hotspots.slice(0, 4).map((hotspot, index) => {
+    const priority =
+      hotspot.priority === "high" || hotspot.priority === "critical"
+        ? "High"
+        : hotspot.priority === "medium"
+          ? "Medium"
+          : "Low";
 
-      return {
-        name: `Hotspot ${index + 1}`,
-        reports: hotspot.report_count,
-        priority:
-          priority as "High" | "Medium" | "Low",
-        trend: `${hotspot.high_priority_reports} high priority`,
-        coords: `${hotspot.latitude.toFixed(
-          4,
-        )}, ${hotspot.longitude.toFixed(4)}`,
-      };
-    });
+    return {
+      name: `Hotspot ${index + 1}`,
+      reports: hotspot.report_count,
+      priority: priority as "High" | "Medium" | "Low",
+      trend: `${hotspot.high_priority_reports} high priority`,
+      coords: `${hotspot.latitude.toFixed(4)}, ${hotspot.longitude.toFixed(4)}`,
+    };
+  });
 
   // -----------------------------------------------
   // Dashboard
@@ -150,7 +124,6 @@ function Dashboard() {
 
       <main className="dashboard-page">
         <div className="dashboard-container">
-
           {/* Header */}
 
           <div className="dashboard-header">
@@ -160,22 +133,15 @@ function Dashboard() {
                 LIVE MUNICIPAL INTELLIGENCE
               </div>
 
-              <h1>
-                City sanitation overview
-              </h1>
+              <h1>City sanitation overview</h1>
 
               <p>
-                Monitor reports, identify waste
-                hotspots, and coordinate collection
-                activity across the city.
+                Monitor reports, identify waste hotspots, and coordinate
+                collection activity across the city.
               </p>
             </div>
 
-            <button
-              className="refresh-button"
-              onClick={loadData}
-              type="button"
-            >
+            <button className="refresh-button" onClick={loadData} type="button">
               <RefreshCw size={15} />
               Refresh data
             </button>
@@ -185,9 +151,7 @@ function Dashboard() {
 
           {error && (
             <div className="route-error">
-              <strong>
-                Data unavailable
-              </strong>
+              <strong>Data unavailable</strong>
 
               <span>{error}</span>
             </div>
@@ -198,15 +162,9 @@ function Dashboard() {
           <section className="dashboard-stats">
             <StatCard
               label="Total reports"
-              value={
-                loading
-                  ? "..."
-                  : String(totalReports)
-              }
+              value={loading ? "..." : String(totalReports)}
               change={
-                loading
-                  ? "Loading..."
-                  : `${pendingReports.length} pending`
+                loading ? "Loading..." : `${pendingReports.length} pending`
               }
               icon={BarChart3}
               variant="green"
@@ -214,17 +172,9 @@ function Dashboard() {
 
             <StatCard
               label="Pending reports"
-              value={
-                loading
-                  ? "..."
-                  : String(
-                      pendingReports.length,
-                    )
-              }
+              value={loading ? "..." : String(pendingReports.length)}
               change={
-                loading
-                  ? "Loading..."
-                  : `${highPriorityPending} high priority`
+                loading ? "Loading..." : `${highPriorityPending} high priority`
               }
               icon={Clock3}
               variant="orange"
@@ -232,21 +182,15 @@ function Dashboard() {
 
             <StatCard
               label="Waste hotspots"
-              value={
-                loading
-                  ? "..."
-                  : String(hotspots.length)
-              }
+              value={loading ? "..." : String(hotspots.length)}
               change={
                 loading
                   ? "Loading..."
                   : `${
                       hotspots.filter(
                         (hotspot) =>
-                          hotspot.priority ===
-                          "high" ||
-                          hotspot.priority ===
-                          "critical",
+                          hotspot.priority === "high" ||
+                          hotspot.priority === "critical",
                       ).length
                     } high priority`
               }
@@ -255,10 +199,18 @@ function Dashboard() {
             />
 
             <StatCard
-              label="Active vehicles"
-              value="18"
-              change="92% fleet active"
-              icon={Truck}
+              label="Resolved reports"
+              value={loading ? "..." : String(resolvedReports)}
+              change={
+                loading
+                  ? "Loading..."
+                  : totalReports > 0
+                    ? `${Math.round(
+                        (resolvedReports / totalReports) * 100,
+                      )}% resolution rate`
+                    : "No reports yet"
+              }
+              icon={CheckCircle2}
               variant="blue"
             />
           </section>
@@ -271,52 +223,39 @@ function Dashboard() {
             </div>
 
             <div>
-              <span>
-                AI SANITATION INSIGHT
-              </span>
+              <span>AI SANITATION INSIGHT</span>
 
               <h2>
                 {hotspots.length > 0
                   ? `${hotspots.length} waste hotspot${
-                      hotspots.length !== 1
-                        ? "s"
-                        : ""
+                      hotspots.length !== 1 ? "s" : ""
                     } detected across the city.`
                   : "No active waste hotspots detected. The city is clean."}
               </h2>
 
               <p>
-                Based on recent reports, historical
-                patterns, and current collection
-                activity, these areas may require
-                additional collection capacity.
+                Based on recent reports, historical patterns, and current
+                collection activity, these areas may require additional
+                collection capacity.
               </p>
             </div>
 
             <Link to="/hotspots">
-              <button type="button">
-                View analysis
-              </button>
+              <button type="button">View analysis</button>
             </Link>
           </section>
 
           {/* Main grid */}
 
           <section className="dashboard-main-grid">
-
             {/* REAL MAP */}
 
             <div className="dashboard-panel map-panel">
               <div className="panel-header">
                 <div>
-                  <h2>
-                    Waste hotspots
-                  </h2>
+                  <h2>Waste hotspots</h2>
 
-                  <span>
-                    Live activity across monitored
-                    areas
-                  </span>
+                  <span>Live activity across monitored areas</span>
                 </div>
 
                 <Link to="/hotspots">
@@ -359,59 +298,37 @@ function Dashboard() {
             <div className="dashboard-panel">
               <div className="panel-header">
                 <div>
-                  <h2>
-                    Top hotspots
-                  </h2>
+                  <h2>Top hotspots</h2>
 
-                  <span>
-                    Areas needing attention
-                  </span>
+                  <span>Areas needing attention</span>
                 </div>
               </div>
 
               <div className="hotspot-list">
                 {loading ? (
                   <div className="route-loading">
-                    <Loader2
-                      className="spin"
-                      size={20}
-                    />
+                    <Loader2 className="spin" size={20} />
 
-                    <span>
-                      Loading hotspots...
-                    </span>
+                    <span>Loading hotspots...</span>
                   </div>
-                ) : topHotspots.length ===
-                  0 ? (
+                ) : topHotspots.length === 0 ? (
                   <div className="route-empty">
                     <CheckCircle2 size={22} />
 
-                    <strong>
-                      No active hotspots
-                    </strong>
+                    <strong>No active hotspots</strong>
 
-                    <span>
-                      All areas are clean.
-                    </span>
+                    <span>All areas are clean.</span>
                   </div>
                 ) : (
-                  topHotspots.map(
-                    (hotspot, index) => (
-                      <HotspotCard
-                        key={index}
-                        name={hotspot.name}
-                        reports={
-                          hotspot.reports
-                        }
-                        priority={
-                          hotspot.priority
-                        }
-                        trend={
-                          hotspot.trend
-                        }
-                      />
-                    ),
-                  )
+                  topHotspots.map((hotspot, index) => (
+                    <HotspotCard
+                      key={index}
+                      name={hotspot.name}
+                      reports={hotspot.reports}
+                      priority={hotspot.priority}
+                      trend={hotspot.trend}
+                    />
+                  ))
                 )}
               </div>
             </div>
@@ -420,69 +337,44 @@ function Dashboard() {
           {/* Reports + Trucks */}
 
           <section className="dashboard-bottom-grid">
-
             <div className="dashboard-panel reports-panel">
               <div className="panel-header">
                 <div>
-                  <h2>
-                    Priority reports
-                  </h2>
+                  <h2>Priority reports</h2>
 
-                  <span>
-                    Reports requiring municipal
-                    attention
-                  </span>
+                  <span>Reports requiring municipal attention</span>
                 </div>
 
                 <Link to="/my-reports">
-                  <button type="button">
-                    View all
-                  </button>
+                  <button type="button">View all</button>
                 </Link>
               </div>
 
               {loading ? (
                 <div className="route-loading">
-                  <Loader2
-                    className="spin"
-                    size={20}
-                  />
+                  <Loader2 className="spin" size={20} />
 
-                  <span>
-                    Loading reports...
-                  </span>
+                  <span>Loading reports...</span>
                 </div>
-              ) : tableReports.length ===
-                0 ? (
+              ) : tableReports.length === 0 ? (
                 <div className="route-empty">
                   <CheckCircle2 size={22} />
 
-                  <strong>
-                    No reports yet
-                  </strong>
+                  <strong>No reports yet</strong>
 
-                  <span>
-                    Submit a report to get
-                    started.
-                  </span>
+                  <span>Submit a report to get started.</span>
                 </div>
               ) : (
-                <ReportTable
-                  reports={tableReports}
-                />
+                <ReportTable reports={tableReports} />
               )}
             </div>
 
             <div className="dashboard-panel">
               <div className="panel-header">
                 <div>
-                  <h2>
-                    Collection fleet
-                  </h2>
+                  <h2>Collection fleet</h2>
 
-                  <span>
-                    Current vehicle activity
-                  </span>
+                  <span>Current vehicle activity</span>
                 </div>
 
                 <Truck size={18} />
@@ -531,21 +423,11 @@ function Dashboard() {
                   {loading
                     ? "..."
                     : totalReports > 0
-                      ? `${Math.round(
-                          (reports.filter(
-                            (report) =>
-                              report.status ===
-                              "resolved",
-                          ).length /
-                            totalReports) *
-                            100,
-                        )}%`
+                      ? `${Math.round((resolvedReports / totalReports) * 100)}%`
                       : "—"}
                 </strong>
 
-                <span>
-                  Resolution rate
-                </span>
+                <span>Resolution rate</span>
               </div>
             </div>
 
@@ -553,13 +435,9 @@ function Dashboard() {
               <Clock3 size={18} />
 
               <div>
-                <strong>
-                  3.2 hrs
-                </strong>
+                <strong>3.2 hrs</strong>
 
-                <span>
-                  Average response time
-                </span>
+                <span>Average response time</span>
               </div>
             </div>
 
@@ -567,41 +445,26 @@ function Dashboard() {
               <Bell size={18} />
 
               <div>
-                <strong>
-                  {loading
-                    ? "..."
-                    : hotspots.length}
-                </strong>
+                <strong>{loading ? "..." : hotspots.length}</strong>
 
-                <span>
-                  Active hotspots
-                </span>
+                <span>Active hotspots</span>
               </div>
             </div>
           </section>
-
         </div>
       </main>
     </div>
   );
 }
 
-function getReportAge(
-  createdAt: string,
-): string {
+function getReportAge(createdAt: string): string {
   const now = new Date();
 
-  const created = new Date(
-    createdAt,
-  );
+  const created = new Date(createdAt);
 
-  const diffMs =
-    now.getTime() -
-    created.getTime();
+  const diffMs = now.getTime() - created.getTime();
 
-  const diffMinutes = Math.floor(
-    diffMs / 60000,
-  );
+  const diffMinutes = Math.floor(diffMs / 60000);
 
   if (diffMinutes < 1) {
     return "Just now";
@@ -612,14 +475,10 @@ function getReportAge(
   }
 
   if (diffMinutes < 1440) {
-    return `${Math.floor(
-      diffMinutes / 60,
-    )} hr`;
+    return `${Math.floor(diffMinutes / 60)} hr`;
   }
 
-  return `${Math.floor(
-    diffMinutes / 1440,
-  )} days`;
+  return `${Math.floor(diffMinutes / 1440)} days`;
 }
 
 export default Dashboard;

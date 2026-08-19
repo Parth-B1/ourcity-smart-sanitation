@@ -36,12 +36,32 @@ function getHotspotRadius(priority: string) {
   }
 }
 
+function getPriorityLabel(priority: string) {
+  const normalized = priority.toLowerCase();
+
+  if (normalized === "critical") {
+    return "CRITICAL";
+  }
+
+  if (normalized === "high") {
+    return "HIGH";
+  }
+
+  if (normalized === "medium") {
+    return "MEDIUM";
+  }
+
+  return "LOW";
+}
+
 function HotspotLayer({
   hotspots,
 }: HotspotLayerProps) {
   return (
     <>
       {hotspots.map((hotspot, index) => {
+        const priority = hotspot.priority.toLowerCase();
+
         const color = getHotspotColor(
           hotspot.priority,
         );
@@ -49,6 +69,9 @@ function HotspotLayer({
         const radius = getHotspotRadius(
           hotspot.priority,
         );
+
+        const priorityLabel =
+          getPriorityLabel(hotspot.priority);
 
         return (
           <CircleMarker
@@ -66,34 +89,167 @@ function HotspotLayer({
             }}
           >
             <Popup>
-              <div className="hotspot-popup">
-                <strong>Waste Hotspot</strong>
+              <div
+                style={{
+                  minWidth: "220px",
+                  fontFamily:
+                    "Arial, sans-serif",
+                }}
+              >
+                {/* Header */}
+                <div
+                  style={{
+                    marginBottom: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      letterSpacing: "0.08em",
+                      color: "#666",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    WASTE HOTSPOT
+                  </div>
 
-                <div>
-                  <span>Priority:</span>{" "}
-                  <strong>
-                    {hotspot.priority.toUpperCase()}
-                  </strong>
+                  <div
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: 700,
+                      color,
+                    }}
+                  >
+                    {priorityLabel} PRIORITY
+                  </div>
                 </div>
 
-                <div>
-                  <span>Total reports:</span>{" "}
-                  {hotspot.report_count}
+                {/* Statistics */}
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns:
+                      "1fr 1fr",
+                    gap: "8px",
+                    marginBottom: "12px",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "8px",
+                      background: "#f5f5f5",
+                      borderRadius: "6px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        color: "#777",
+                      }}
+                    >
+                      Total reports
+                    </div>
+
+                    <strong
+                      style={{
+                        fontSize: "18px",
+                      }}
+                    >
+                      {hotspot.report_count}
+                    </strong>
+                  </div>
+
+                  <div
+                    style={{
+                      padding: "8px",
+                      background: "#f5f5f5",
+                      borderRadius: "6px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        color: "#777",
+                      }}
+                    >
+                      High priority
+                    </div>
+
+                    <strong
+                      style={{
+                        fontSize: "18px",
+                      }}
+                    >
+                      {
+                        hotspot.high_priority_reports
+                      }
+                    </strong>
+                  </div>
                 </div>
 
-                <div>
-                  <span>High priority:</span>{" "}
-                  {hotspot.high_priority_reports}
+                {/* Location */}
+                <div
+                  style={{
+                    borderTop:
+                      "1px solid #e5e5e5",
+                    paddingTop: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      color: "#777",
+                      marginBottom: "3px",
+                    }}
+                  >
+                    LOCATION
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: "13px",
+                    }}
+                  >
+                    {hotspot.latitude.toFixed(
+                      5,
+                    )}
+                    ,{" "}
+                    {hotspot.longitude.toFixed(
+                      5,
+                    )}
+                  </div>
                 </div>
 
-                <div>
-                  <span>Latitude:</span>{" "}
-                  {hotspot.latitude.toFixed(5)}
-                </div>
-
-                <div>
-                  <span>Longitude:</span>{" "}
-                  {hotspot.longitude.toFixed(5)}
+                {/* Recommendation */}
+                <div
+                  style={{
+                    marginTop: "10px",
+                    padding: "9px",
+                    borderRadius: "6px",
+                    background:
+                      priority === "high" ||
+                      priority === "critical"
+                        ? "#fff3f1"
+                        : "#fff8eb",
+                    fontSize: "12px",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {priority === "high" ||
+                  priority === "critical" ? (
+                    <strong>
+                      Prioritize this area
+                      for waste collection.
+                    </strong>
+                  ) : (
+                    <span>
+                      Monitor this area and
+                      include it in the
+                      collection plan.
+                    </span>
+                  )}
                 </div>
               </div>
             </Popup>

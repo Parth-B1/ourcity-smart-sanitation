@@ -28,6 +28,8 @@ class ReportResponse(BaseModel):
     ai_severity: str | None
     ai_reasoning: str | None
 
+    image_url: str | None
+
     created_at: datetime
 
     model_config = ConfigDict(

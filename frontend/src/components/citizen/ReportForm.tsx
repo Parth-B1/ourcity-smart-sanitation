@@ -52,7 +52,11 @@ function ReportForm() {
         location: location,
         latitude,
         longitude,
-      });
+        
+      
+      },
+      image,
+    );
 
       setResult(response);
       setSubmitted(true);

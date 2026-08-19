@@ -5,7 +5,7 @@ from app.api.routes.reports import router as reports_router
 from app.api.routes.hotspots import router as hotspots_router
 from app.api.routes.routes import router as routes_router
 from app.api.routes.truck import router as trucks_router
-from app.api.routes.collections import router as collection_router
+from app.api.routes.collections import router as collections_router
 
 api_router = APIRouter(
     prefix="/api",
@@ -40,5 +40,6 @@ api_router.include_router(
 )
 
 api_router.include_router(
-    collection_router,
+    collections_router,
 )
+

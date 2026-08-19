@@ -47,3 +47,43 @@ export async function getNearbyCollection(
 
   return response.json();
 }
+
+export interface ApproachingCollectionResponse {
+  approaching: boolean;
+  truck_id: string | null;
+  estimated_minutes: number | null;
+  latitude: number | null;
+  longitude: number | null;
+}
+
+export async function getApproachingCollection(
+  latitude: number,
+  longitude: number,
+): Promise<ApproachingCollectionResponse> {
+  const token = getToken();
+
+  if (!token) {
+    throw new Error("You are not authenticated.");
+  }
+
+  const response = await fetch(
+    `${API_URL}/api/collections/approaching?latitude=${latitude}&longitude=${longitude}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    const error =
+      await response.json().catch(() => null);
+
+    throw new Error(
+      error?.detail ||
+        "Failed to fetch approaching collection",
+    );
+  }
+
+  return response.json();
+}

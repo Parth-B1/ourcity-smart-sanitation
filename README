@@ -1,65 +1,133 @@
-# OurCity — Smart Sanitation
+# 🗑️ Smart Sanitation – AI-Powered Waste Management Platform
 
-> AI-powered waste management and illegal dumping detection platform for a cleaner, smarter Nagpur.
+> An AI-powered smart sanitation platform designed to make urban waste management faster, smarter, and more citizen-centric.
 
-## 📌 Project
+## 🌆 Overview
 
-OurCity is an intelligent waste-management platform designed for the Viksit Nagpur theme.
+Smart Sanitation is a web-based platform that connects citizens and sanitation authorities through an intelligent waste-reporting system.
 
-The system transforms citizen waste reports into actionable intelligence by:
+Citizens can report sanitation problems such as garbage accumulation, overflowing bins, and uncollected waste. The platform uses AI to analyze submitted reports, determine the type and severity of the issue, and calculate its priority.
 
-- Detecting and classifying waste using AI
-- Identifying illegal dumping hotspots
-- Prioritizing waste-collection requests
-- Predicting recurring dumping locations
-- Optimizing municipal garbage collection routes
-- Providing an NMC monitoring dashboard
+The system provides authorities with a centralized dashboard to monitor complaints, identify sanitation hotspots, and manage reported issues more efficiently.
 
-## 🎯 Problem
+The platform also aims to improve communication between citizens and waste collection services by providing information about upcoming garbage collection activity.
 
-Inconsistent waste collection and illegal dumping can create recurring sanitation problems in open spaces and residential areas.
+---
 
-Traditional complaint systems are mainly reactive:
+## 🚨 Problem
 
-Citizen reports → Municipality responds
+Urban sanitation systems often face several challenges:
 
-OurCity aims to move toward:
+- Citizens don't always know where or how to report sanitation problems.
+- Manual complaint processing can be slow.
+- Authorities may have difficulty identifying high-priority complaints.
+- Repeated complaints can make it difficult to understand sanitation hotspots.
+- Citizens often don't know when garbage collection vehicles will arrive.
+- Lack of real-time visibility can reduce the efficiency of waste management.
 
-Citizen data → AI analysis → Hotspot intelligence → Prediction → Route optimization → Resolution
+Our project addresses these problems using **AI, location-based reporting, and centralized data management**.
 
-## 🚀 MVP Features
+---
 
-- [ ] Citizen waste reporting
-- [ ] Image upload
-- [ ] GPS location detection
-- [ ] AI waste classification
-- [ ] Waste severity detection
-- [ ] Automatic ticket generation
-- [ ] Ward assignment
-- [ ] Illegal dumping hotspot detection
-- [ ] Hotspot prediction
-- [ ] NMC dashboard
-- [ ] Waste heatmap
-- [ ] Garbage truck route optimization
-- [ ] Collection analytics
+## 💡 Our Solution
 
-## 🏗️ Architecture
+Smart Sanitation provides a single platform where:
+
+**Citizen → Reports Problem → AI Analysis → Priority Calculation → Authority Dashboard → Action**
+
+Instead of treating every complaint equally, the system helps identify which problems require greater attention.
+
+---
+
+## ⚙️ How It Works
+
+### 1. Citizen Reports a Problem
+
+A citizen submits a sanitation complaint through the web application.
+
+A report may contain:
+
+- Problem description
+- Location
+- Category
+- Additional information
+- Image/evidence (if supported)
+
+### 2. AI Analyzes the Report
+
+The backend processes the submitted report using AI.
+
+The AI helps understand:
+
+- Type of sanitation problem
+- Severity of the issue
+- Relevant classification information
+
+### 3. Priority is Calculated
+
+The platform calculates a priority score for the complaint.
+
+This helps authorities distinguish between:
+
+- Low-priority issues
+- Medium-priority issues
+- High-priority issues
+- Critical sanitation problems
+
+### 4. Report is Stored
+
+The processed report is stored in the backend database.
+
+Each report can be tracked through its lifecycle.
+
+### 5. Authority Dashboard
+
+Authorities can view reported sanitation problems through a centralized dashboard.
+
+The dashboard provides visibility into:
+
+- Total reports
+- Pending issues
+- Resolved issues
+- High-priority complaints
+- Report locations
+- Sanitation hotspots
+
+### 6. Location-Based Visualization
+
+Reports can be displayed geographically, helping authorities understand where sanitation problems are concentrated.
+
+This can help identify areas that repeatedly experience waste-management problems.
+
+### 7. Garbage Collection Notifications
+
+The platform can also support communication about upcoming garbage collection activity.
+
+Instead of citizens having to guess when a garbage collection vehicle will arrive, the system can provide notifications about expected collection activity.
+
+---
+
+## 🧠 AI Integration
+
+AI is one of the core components of the platform.
+
+Instead of simply storing complaints, the system attempts to understand the submitted information and convert it into useful structured information.
+
+### AI Pipeline
 
 ```text
-Citizen
-   ↓
-Photo + GPS
-   ↓
-AI Waste Classification
-   ↓
-Severity / Priority
-   ↓
-Hotspot Detection
-   ↓
-NMC Dashboard
-   ↓
-Route Optimization
-   ↓
-Collection
-   ↓
-Resolution
+Citizen Report
+      ↓
+Backend API
+      ↓
+AI Analysis
+      ↓
+Problem Classification
+      ↓
+Severity Assessment
+      ↓
+Priority Calculation
+      ↓
+Database
+      ↓
+Authority Dashboard
