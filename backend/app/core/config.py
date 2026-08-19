@@ -1,9 +1,9 @@
 import os
 
-JWT_SECRET_KEY = os.getenv(
-    "JWT_SECRET_KEY",
-    "ourcity-hackathon-secret-change-before-production",
-)
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+
+if not JWT_SECRET_KEY:
+    raise RuntimeError("JWT_SECRET_KEY environment variable is not set")
 
 JWT_ALGORITHM = "HS256"
 
