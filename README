@@ -1,133 +1,351 @@
-# 🗑️ Smart Sanitation – AI-Powered Waste Management Platform
+# 🗑️ Smart Sanitation — AI-Assisted Waste Management Platform
 
-> An AI-powered smart sanitation platform designed to make urban waste management faster, smarter, and more citizen-centric.
+> A smarter way to report, prioritize, and manage urban sanitation problems.
 
-## 🌆 Overview
+Smart Sanitation is a web-based platform designed to improve urban waste management by connecting **citizens, intelligent report analysis, and sanitation authorities** in one system.
 
-Smart Sanitation is a web-based platform that connects citizens and sanitation authorities through an intelligent waste-reporting system.
+Citizens can report sanitation problems such as garbage accumulation, overflowing bins, litter, and other waste-related issues. The system analyzes each report, determines its severity, calculates a priority, and presents the information through an authority dashboard.
 
-Citizens can report sanitation problems such as garbage accumulation, overflowing bins, and uncollected waste. The platform uses AI to analyze submitted reports, determine the type and severity of the issue, and calculate its priority.
+The goal is simple:
 
-The system provides authorities with a centralized dashboard to monitor complaints, identify sanitation hotspots, and manage reported issues more efficiently.
-
-The platform also aims to improve communication between citizens and waste collection services by providing information about upcoming garbage collection activity.
+> **Make sanitation management faster, smarter, and more proactive.**
 
 ---
 
-## 🚨 Problem
+## 🚨 The Problem
 
-Urban sanitation systems often face several challenges:
+Traditional sanitation complaint systems can have several limitations:
 
-- Citizens don't always know where or how to report sanitation problems.
-- Manual complaint processing can be slow.
-- Authorities may have difficulty identifying high-priority complaints.
-- Repeated complaints can make it difficult to understand sanitation hotspots.
-- Citizens often don't know when garbage collection vehicles will arrive.
-- Lack of real-time visibility can reduce the efficiency of waste management.
+- Citizens may not know how to properly report problems.
+- Complaints may be treated with the same priority.
+- Authorities may struggle to identify urgent sanitation issues.
+- Repeated complaints can make sanitation hotspots difficult to identify.
+- Citizens often don't know when garbage collection will happen.
+- Lack of centralized information can slow down response times.
 
-Our project addresses these problems using **AI, location-based reporting, and centralized data management**.
+Smart Sanitation addresses these challenges by combining **citizen reporting, intelligent analysis, priority management, maps, and dashboards**.
 
 ---
 
 ## 💡 Our Solution
 
-Smart Sanitation provides a single platform where:
+Our platform creates a simple flow:
 
-**Citizen → Reports Problem → AI Analysis → Priority Calculation → Authority Dashboard → Action**
+```text
+Citizen
+   ↓
+Report Sanitation Problem
+   ↓
+Intelligent Analysis
+   ↓
+Severity Detection
+   ↓
+Priority Calculation
+   ↓
+Database
+   ↓
+Authority Dashboard
+   ↓
+Action & Resolution      
 
-Instead of treating every complaint equally, the system helps identify which problems require greater attention.
-
----
-
-## ⚙️ How It Works
-
-### 1. Citizen Reports a Problem
+⚙️ How It Works
+1️⃣ Citizen Reports a Problem
 
 A citizen submits a sanitation complaint through the web application.
 
-A report may contain:
+The report can contain information such as:
 
-- Problem description
-- Location
-- Category
-- Additional information
-- Image/evidence (if supported)
+Problem category
+Description
+Location
+Supporting image
+2️⃣ Intelligent Report Analysis
 
-### 2. AI Analyzes the Report
+The backend analyzes the submitted report using an intelligent classification layer.
 
-The backend processes the submitted report using AI.
+The system looks for indicators associated with different levels of sanitation risk and determines:
 
-The AI helps understand:
+Problem category
+Severity
+Confidence
+Reasoning
 
-- Type of sanitation problem
-- Severity of the issue
-- Relevant classification information
+For example, reports containing indicators such as overflowing garbage, sewage, burning waste, dumping, or dead animals can receive higher severity.
 
-### 3. Priority is Calculated
+3️⃣ Priority Calculation
 
-The platform calculates a priority score for the complaint.
+After analysis, the system calculates a priority for the report.
 
-This helps authorities distinguish between:
+This helps distinguish between:
 
-- Low-priority issues
-- Medium-priority issues
-- High-priority issues
-- Critical sanitation problems
+Low → Medium → High → Critical
 
-### 4. Report is Stored
+so that urgent sanitation issues can receive faster attention.
 
-The processed report is stored in the backend database.
+4️⃣ Centralized Database
 
-Each report can be tracked through its lifecycle.
+Reports are stored in the backend database so they can be tracked and managed.
 
-### 5. Authority Dashboard
+This creates a centralized source of sanitation information.
 
-Authorities can view reported sanitation problems through a centralized dashboard.
+5️⃣ Authority Dashboard
+
+Authorities can access a dashboard containing information about reported problems.
 
 The dashboard provides visibility into:
 
-- Total reports
-- Pending issues
-- Resolved issues
-- High-priority complaints
-- Report locations
-- Sanitation hotspots
+Total reports
+Report status
+Priority levels
+Sanitation hotspots
+Report locations
+Garbage collection information
+Trucks and routes
+6️⃣ Map-Based Monitoring
 
-### 6. Location-Based Visualization
+Sanitation reports can be displayed on an interactive map.
 
-Reports can be displayed geographically, helping authorities understand where sanitation problems are concentrated.
+This makes it easier to identify areas where sanitation problems are concentrated.
 
-This can help identify areas that repeatedly experience waste-management problems.
+Over time, this information can help authorities identify sanitation hotspots and recurring problem areas.
 
-### 7. Garbage Collection Notifications
+7️⃣ Garbage Collection
 
-The platform can also support communication about upcoming garbage collection activity.
+The platform is designed to support better communication around garbage collection.
 
-Instead of citizens having to guess when a garbage collection vehicle will arrive, the system can provide notifications about expected collection activity.
+Instead of citizens being unsure about when a collection vehicle will arrive, the system can provide collection information and notifications.
 
----
+🧠 Intelligent Analysis
 
-## 🧠 AI Integration
+The current system uses a lightweight rule-based intelligence layer that analyzes report descriptions and identifies sanitation-risk indicators.
 
-AI is one of the core components of the platform.
+Example:
 
-Instead of simply storing complaints, the system attempts to understand the submitted information and convert it into useful structured information.
+Report:
+"Garbage is overflowing onto the road."
 
-### AI Pipeline
 
-```text
-Citizen Report
-      ↓
-Backend API
-      ↓
-AI Analysis
-      ↓
-Problem Classification
-      ↓
-Severity Assessment
-      ↓
+        ↓
+
+
+Keyword / Risk Analysis
+
+
+        ↓
+
+
+Severity: HIGH
+Confidence: 94%
+
+
+        ↓
+
+
 Priority Calculation
-      ↓
+
+The architecture is intentionally designed so that this component can later be replaced or extended with:
+
+Large Language Models
+Computer Vision
+Image classification
+More advanced ML models
+
+without redesigning the entire application.
+
+🏗️ System Architecture
+                    ┌───────────────────┐
+                    │     CITIZEN       │
+                    │   Web Interface   │
+                    └─────────┬─────────┘
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │     FASTAPI       │
+                    │      Backend      │
+                    └─────────┬─────────┘
+                              │
+              ┌───────────────┼───────────────┐
+              │               │               │
+              ▼               ▼               ▼
+       ┌────────────┐ ┌──────────────┐ ┌────────────┐
+       │ Intelligent│ │   Priority   │ │   Report   │
+       │  Analysis  │ │   Service    │ │   Service  │
+       └──────┬─────┘ └──────┬───────┘ └─────┬──────┘
+              │              │               │
+              └──────────────┼───────────────┘
+                             ▼
+                    ┌───────────────────┐
+                    │     DATABASE      │
+                    └─────────┬─────────┘
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │    AUTHORITY      │
+                    │     DASHBOARD     │
+                    └───────────────────┘
+🛠️ Tech Stack
+Frontend
+React
+TypeScript
+Vite
+CSS
+Leaflet
+React Leaflet
+Backend
+Python
+FastAPI
+SQLAlchemy
+Pydantic
+Authentication
+JWT authentication
+Password hashing
+Role-based authorization
 Database
-      ↓
-Authority Dashboard
+SQLite
+SQLAlchemy ORM
+Development
+Git
+GitHub
+npm
+Python virtual environment
+
+
+##✨ Key Features
+👤 Citizen Features
+Submit sanitation reports
+Select problem categories
+Add descriptions
+Select locations
+Upload supporting images
+View submitted reports
+🤖 Intelligent Processing
+Automated report analysis
+Severity detection
+Confidence scoring
+Priority calculation
+Risk-based classification
+🏢 Authority Features
+Centralized dashboard
+Report management
+Priority monitoring
+Status tracking
+Sanitation hotspot monitoring
+🗺️ Map Features
+Interactive city map
+Report markers
+Hotspot visualization
+Route visualization
+🚛 Waste Collection
+Collection management
+Truck information
+Route management
+Collection monitoring
+🔐 Authentication & Security
+
+The backend uses:
+
+JWT-based authentication
+Password hashing
+Protected API routes
+Role-based authorization
+
+Sensitive configuration such as JWT secrets is stored using environment variables.
+
+Secrets and environment files are intentionally excluded from the repository.
+
+📁 Project Structure
+ourcity-smart-sanitation/
+│
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── routes/
+│   │   ├── core/
+│   │   ├── db/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   └── main.py
+│   │
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── utils/
+│   │
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── .gitignore
+└── README.md
+🚀 Getting Started
+Prerequisites
+
+Make sure you have:
+
+Python 3.10+
+Node.js
+npm
+Git
+Backend Setup
+
+Clone the repository:
+
+git clone YOUR_REPOSITORY_URL
+cd ourcity-smart-sanitation
+
+Navigate to the backend:
+
+cd backend
+
+Create a virtual environment:
+
+python -m venv venv
+
+Activate it on Windows:
+
+venv\Scripts\activate
+
+Install dependencies:
+
+pip install -r requirements.txt
+
+Create a .env file:
+
+JWT_SECRET_KEY=YOUR_SECRET_KEY
+
+Start the backend:
+
+uvicorn app.main:app --reload
+
+The API will normally be available at:
+
+http://127.0.0.1:8000
+
+FastAPI documentation:
+
+http://127.0.0.1:8000/docs
+💻 Frontend Setup
+
+Open a new terminal.
+
+Navigate to the frontend:
+
+cd frontend
+
+Install dependencies:
+
+npm install
+
+Start the development server:
+
+npm run dev
+
+The frontend will normally run at:
+
+http://localhost:5173
+
+
